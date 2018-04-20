@@ -80,6 +80,16 @@ class DatasetDetailViewComponent extends React.Component {
         this.props.fetchDataset(this.props.location.query[queryKey]);
     }
 
+    componentWillReceiveProps(nextProps) {
+        const queryKey = getQuery(DATASET_QUERY);
+        const oldIri = this.props.location.query[queryKey];
+        const nextIri = nextProps.location.query[queryKey];
+        if (oldIri !== nextIri) {
+            this.props.fetchDataset(nextIri);
+        }
+    }
+
+
     render() {
         setPageTitle(getString("title.dataset"));
 
