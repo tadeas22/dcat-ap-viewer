@@ -37,7 +37,7 @@ class DistributionRow extends React.Component {
         }
 
 
-        let title = dist.title;
+        let title = dist_entity.title;
         // TODO Move to helper class.
         if (title === undefined || title.length === 0) {
             title = getString("s.unnamed_distribution");
@@ -45,43 +45,53 @@ class DistributionRow extends React.Component {
 
         // TODO Handle multiple values.
         let url;
-        if (dist.downloadURL === undefined || dist.downloadURL.length === 0) {
-            if (dist.accessURL === undefined || dist.accessURL.length === 0) {
+        if (dist_entity.downloadURL === undefined ||
+            dist_entity.downloadURL.length === 0) {
+            if (dist_entity.accessURL === undefined ||
+                dist_entity.accessURL.length === 0) {
                 // TODO Handle missing URL - ie. invalid data.
-                console.log("Invalid distribution,", dist);
+                console.log("Invalid distribution,", dist_entity);
                 return null;
             } else {
-                url = dist.accessURL[0];
+                url = dist_entity.accessURL[0];
             }
         } else {
-            url = dist.downloadURL[0];
+            url = dist_entity.downloadURL[0];
         }
 
         let formatLabel;
-        if (dist.format === undefined) {
+        if (dist_entity.format === undefined) {
             formatLabel = undefined;
         } else {
-            formatLabel = selectLabel(dist.format);
+            formatLabel = selectLabel(dist_entity.format);
         }
 
         return (
             <tr>
                 <td>
-                    <a href={url} rel="nofollow" className="distribution-link">{title}</a>
+                    <a href={url} rel="nofollow" className="distribution-link">
+                        {title}
+                        </a>
                 </td>
                 <td>
-                    {dist.format !== undefined &&
-                    <a href={dist.format.iri} rel="nofollow">{formatLabel}</a>
+                    {dist_entity.format !== undefined &&
+                    <a href={dist_entity.format.iri} rel="nofollow">
+                        {formatLabel}
+                        </a>
                     }
                 </td>
                 <td>
-                    {dist.conformsTo !== undefined &&
-                    <a href={dist.conformsTo} rel="nofollow">{dist.conformsTo}</a>
+                    {dist_entity.conformsTo !== undefined &&
+                    <a href={dist_entity.conformsTo} rel="nofollow">
+                        {dist_entity.conformsTo}
+                        </a>
                     }
                 </td>
                 <td>
-                    {dist.license !== undefined &&
-                    <a href={dist.license} rel="nofollow">{dist.license}</a>
+                    {dist_entity.license !== undefined &&
+                    <a href={dist_entity.license} rel="nofollow">
+                        {dist_entity.license}
+                        </a>
                     }
                 </td>
             </tr>
