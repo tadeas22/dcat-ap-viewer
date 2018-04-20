@@ -10,6 +10,10 @@ const configuration = require('./../server_configuration');
     router.get("/codelist", createFetchCodeListFunction());
     router.get("/static", createStaticFunction());
 
+    // TODO Move to service layer ?
+    router.get("/semantic/similar-datasets", createSimilarDatasetFunction());
+    router.get("/semantic/concept", createConceptDetailFunction());
+
     module.exports = router;
 })();
 
@@ -47,7 +51,7 @@ function handleError(res, error) {
 function fetchDatasetsSparql(req, res) {
     const datasetIri = req.query.iri;
     const sparql = createDatasetSparqlQuery(datasetIri);
-    queryDataFromSparql(res, sparql);
+    queryDataFromSparql(res, sparql, configuration.sparql.url);
 }
 
 function createDatasetSparqlQuery(iri) {
@@ -130,15 +134,14 @@ function createDatasetSparqlQuery(iri) {
     return query;
 }
 
-function queryDataFromSparql(res, sparql) {
-    const url = configuration.sparql.url + "/?" +
+function queryDataFromSparql(res, sparql, endpoint) {
+    const url = endpoint + "?" +
         "format=application%2Fx-json%2Bld&" +
         "timeout=0&" +
         "query=" + encodeURIComponent(sparql);
     request.get({"url": url}).on("error", (error) => {
         handleError(res, error);
     }).pipe(res);
-
 }
 
 function createFetchDistributionsFunction() {
@@ -157,7 +160,7 @@ function fetchDistributionsCouchdb(req, res) {
 function fetchDistributionsSparql(req, res) {
     const distributionIri = req.query.iri;
     const sparql = createDistributionSparqlQuery(distributionIri);
-    queryDataFromSparql(res, sparql);
+    queryDataFromSparql(res, sparql, configuration.sparql.url);
 }
 
 function createDistributionSparqlQuery(iri) {
@@ -183,7 +186,10 @@ function createFetchCodeListFunction() {
         return fetchCodeListCouchdb;
     } else {
         // TODO Provide implementation #39.
-        return (req, res) => res.json({"error": "missing_support"});
+        return (req, res) => {
+            res.status(500);
+            res.json({"error": "missing_support"});
+        }
     }
 }
 
@@ -197,11 +203,78 @@ function createStaticFunction() {
         return fetchStaticCouchdb;
     } else {
         // TODO Provide implementation #39.
-        return (req, res) => res.json({"error": "missing_support"});
+        return (req, res) => {
+            res.status(500);
+            res.json({"error": "missing_support"});
+        }
     }
 }
 
 function fetchStaticCouchdb(req, res) {
     const itemId = req.query.id;
     queryDataFromCouchDB("static", res, itemId);
+}
+
+function createSimilarDatasetFunction() {
+    return (req, res) => {
+        const query = createSimilarDatasetQuery(req.query.iri);
+        queryDataFromSparqlSelect(res, query, configuration.similarDatasets);
+    }
+}
+
+function createSimilarDatasetQuery(iri) {
+    return "" +
+        "PREFIX owl: <http://www.w3.org/2002/07/owl#> " +
+        "PREFIX dcat: <http://www.w3.org/ns/dcat#> " +
+        "PREFIX z-sgov-pojem: <https://ssp.opendata.cz/slovník/základní/pojem/> " +
+        "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> " +
+        "PREFIX dcterms: <http://purl.org/dc/terms/>" +
+        " " +
+        "SELECT DISTINCT ?dataset ?title ?publisher ?publisherLabel WHERE { " +
+        " " +
+        "  { " +
+        "    ?pojem1 skos:inScheme ?glosář . " +
+        "    ?pojem2 skos:inScheme ?glosář . " +
+        "    ?glosář a z-sgov-pojem:legislativní-struktura . " +
+        "    FILTER(?pojem1 > ?pojem2) " +
+        "  } UNION { " +
+        "     ?pojem1 skos:inScheme ?glosář1 . " +
+        "     ?pojem2 skos:inScheme ?glosář2 . " +
+        "     ?glosář1 a z-sgov-pojem:legislativní-struktura . " +
+        "     ?glosář2 a z-sgov-pojem:legislativní-struktura . " +
+        "     ?glosář1 owl:imports+ ?glosář2 . " +
+        "  } " +
+        " " +
+        "  <" + iri + "> dcat:theme ?pojem1 . " +
+        "  ?dataset dcat:theme ?pojem2 . " +
+        "" +
+        "  OPTIONAL { ?dataset dcterms:title ?title. } " +
+        "  OPTIONAL { ?dataset dcterms:publisher ?publisher. } " +
+        "  OPTIONAL { ?publisher skos:prefLabel ?publisherLabel. }" +
+        "" +
+        " FILTER(<" + iri + "> != ?dataset) " +
+        "}";
+}
+
+function queryDataFromSparqlSelect(res, sparql, endpoint) {
+    const url = endpoint + "?" +
+        "format=application%2Fsparql-results%2Bjson&" +
+        "timeout=0&" +
+        "query=" + encodeURIComponent(sparql);
+    request.get({
+        "url": url
+    }).on("error", (error) => {
+        handleError(res, error);
+    }).pipe(res);
+}
+
+function createConceptDetailFunction() {
+    return (req, res) => {
+        const query = createConceptDetailQuery(req.query.iri);
+        queryDataFromSparql(res, query, configuration.concepts);
+    }
+}
+
+function createConceptDetailQuery(iri) {
+    return "CONSTRUCT { <" + iri +"> ?p ?o } WHERE {  <" + iri +"> ?p ?o . }";
 }
