@@ -93,7 +93,7 @@ class _SkosConcepts extends React.Component {
     // }
 
     componentWillUnmount() {
-        this.props.onUnmoun();
+        this.props.onUnmount();
     }
 
 }
