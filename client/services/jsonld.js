@@ -5,7 +5,7 @@ export const graph = {};
 
 // TODO Rename to more reflect return type (entity object).
 graph.getByType = (data, type) => {
-    const graph = data["@graph"];
+    const graph = getGraph(data);
     if (graph === undefined || graph.length === undefined) {
         return undefined;
     }
@@ -17,9 +17,19 @@ graph.getByType = (data, type) => {
     return undefined;
 };
 
+function getGraph(data) {
+    // TODO Add support for different data formats.
+    if (data["@graph"] === undefined) {
+        return data;
+    } else {
+        return data["@graph"]
+    }
+
+}
+
 graph.getByResources = (data, iris) => {
     const iriList = asArray(iris);
-    const graph = data["@graph"];
+    const graph = getGraph(data);
     const result = [];
     for (let index = 0; index < graph.length; ++index) {
         if (iriList.indexOf(triples.id(graph[index])) > -1) {
@@ -33,7 +43,7 @@ graph.getByResource = (data, iri) => {
     if (iri == undefined) {
         return undefined;
     }
-    const graph = data["@graph"];
+    const graph = getGraph(data);
     for (let index = 0; index < graph.length; ++index) {
         if (triples.id(graph[index]) === iri) {
             return graph[index];
@@ -62,6 +72,7 @@ triples.type = (entity) => {
     }
     if (entity[RDF.type] !== undefined) {
         // As a fallback for invalid json-ld
+
         return triples.resources(entity, RDF.type);
     }
     return [];
