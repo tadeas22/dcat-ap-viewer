@@ -23,6 +23,9 @@ import setPageTitle from "../../services/page-title";
 import {isDataReady} from "./../../services/http-request";
 import {selectLabel, selectLabels} from "./../../services/labels";
 import {HttpRequestStatus} from "./../../application/http-request-status";
+import {SkosConcepts} from "./skos-concept";
+import {SimilarDatasets} from "./similar-datasets";
+import {themesSelector} from "./dataset-detail-reducer";
 
 class DatasetMetadataComponent extends React.Component {
     render() {
@@ -99,6 +102,14 @@ class DatasetDetailViewComponent extends React.Component {
         const title = selectLabel(dataset.title);
         setPageTitle(title);
 
+        const extensionStyle = {
+            "marginTop": "2rem",
+            "padding": "0.5rem",
+            "borderStyle": "solid",
+            "borderWidth": "1px",
+            "borderColor": "#E7E6E3"
+        };
+
         return (
             <Container>
                 <div style={{"marginTop": "2em"}}>
@@ -109,6 +120,12 @@ class DatasetDetailViewComponent extends React.Component {
                     </h4>
                     <p>{selectLabel(dataset.description)}</p>
                     <TagLine values={selectLabels(dataset.keywords)}/>
+                </div>
+                <div style={extensionStyle}>
+                    <SkosConcepts concepts={this.props.themes}/>
+                </div>
+                <div style={{"marginTop": "2em"}}>
+                    <SimilarDatasets datasetIri={dataset["@id"]}/>
                 </div>
                 <div style={{"marginTop": "2em"}}>
                     <DatasetPropertyTable dataset={dataset}/>
@@ -133,7 +150,8 @@ class DatasetDetailViewComponent extends React.Component {
 const mapStateToProps = (state, ownProps) => ({
     "ui": state.dataset.detail.ui,
     "dataset": state.dataset.detail.dataset,
-    "distributions": state.dataset.detail.distributions
+    "distributions": state.dataset.detail.distributions,
+    "themes": themesSelector(state)
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

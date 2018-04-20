@@ -22,9 +22,10 @@ const initialState = {
         "distributionsPageSize": 10
     },
     "dataset": {
+        // TODO Change to entity, so status is not mixed with other properties.
         "status": STATUS_INITIAL
     },
-    "distributions": {}
+    "distributions": {},
 };
 
 // TODO Extract "labels" service?
@@ -211,3 +212,15 @@ function onSetDistributionPageSize(state, action) {
 }
 
 // TODO Add selectors.
+
+const selector = (state) => state["dataset"]["detail"];
+
+export function themesSelector(state) {
+    const dataset = selector(state).dataset;
+    if (dataset === undefined ||
+        dataset["themes"] === undefined) {
+        return [];
+    }
+    // TODO Add implementation.
+    return dataset["themes"].map((theme) => theme["@id"]);
+}
