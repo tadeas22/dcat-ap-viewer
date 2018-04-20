@@ -63,8 +63,8 @@ export function fetchLabel(iri, identifier) {
             } else {
                 dispatch(fetchLabelSuccess(iri, identifier, labels));
             }
-        }, (error) => {
-            console.warn("No data found for: ", iri, error);
+        }, () => {
+            console.warn("Codelist request failed for : ", iri);
         });
     };
 }
