@@ -15,10 +15,10 @@ class DistributionRow extends React.Component {
     }
 
     render() {
-        const dist = this.props.distribution;
+        const dist_entity = this.props.distribution;
 
         // TODO Introduce some general handling of fetching - DAO. Children can be wrapped as a properties.
-        if (dist === undefined || isStatusLoading(dist.status)) {
+        if (dist_entity === undefined || isStatusLoading(dist_entity.status)) {
             return (
                 <tr>
                     <td colSpan={3}>
@@ -26,7 +26,7 @@ class DistributionRow extends React.Component {
                     </td>
                 </tr>
             )
-        } else if (isStatusFailed(dist.status)) {
+        } else if (isStatusFailed(dist_entity.status)) {
             return (
                 <tr>
                     <td colSpan={3}>
@@ -35,6 +35,7 @@ class DistributionRow extends React.Component {
                 </tr>
             )
         }
+
 
         let title = dist.title;
         // TODO Move to helper class.
@@ -47,7 +48,8 @@ class DistributionRow extends React.Component {
         if (dist.downloadURL === undefined || dist.downloadURL.length === 0) {
             if (dist.accessURL === undefined || dist.accessURL.length === 0) {
                 // TODO Handle missing URL - ie. invalid data.
-                console.log("Invalid data, missing accessURL", dist);
+                console.log("Invalid distribution,", dist);
+                return null;
             } else {
                 url = dist.accessURL[0];
             }
