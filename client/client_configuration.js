@@ -6,13 +6,6 @@
     const sparql = properties.get("virtuoso.sparql.url");
     const couchdb = properties.get("couchdb.url");
 
-    let repositoryType;
-    if (isEmptyOrUnset(couchdb)) {
-        repositoryType = "COUCHDB";
-    } else {
-        repositoryType = "SPARQL";
-    }
-
     let footerPath = properties.get("footer_file_path");
     if (footerPath === 0 || footerPath === null) {
         footerPath = undefined;
@@ -21,7 +14,7 @@
     module.exports = {
         "CONST_TITLE_PREFIX": properties.get("client.title_prefix"),
         "CONST_TITLE_SUFFIX": properties.get("client.title_suffix"),
-        "REPOSITORY_TYPE": repositoryType,
+        "REPOSITORY_TYPE": isEmptyOrUnset(couchdb) ? "SPARQL" : "COUCHDB",
         "SENTRY_REPORT": isEmptyOrUnset(properties.get("sentry.url")),
         "SENTRY_URL": properties.get("sentry.url"),
         "IS_PRODUCTION_ENV":  process.env.NODE_ENV === "production",
@@ -43,7 +36,7 @@ function readProperty(option) {
 }
 
 function readProgramArgument(name) {
-    var value = undefined;
+    let value = undefined;
     process.argv.forEach(function (val, index) {
         const line = val.split("=");
         if (line.length != 2) {
@@ -57,6 +50,6 @@ function readProgramArgument(name) {
 }
 
 function isEmptyOrUnset(value) {
-    return value === 0 || value !== null;
+    return value === 0 || value === null || value === undefined;
 }
 

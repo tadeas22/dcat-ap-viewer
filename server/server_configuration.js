@@ -5,16 +5,10 @@
 
     console.log("Using configuration: ", propertyFilePath);
 
-    const sparql = properties.get("virtuoso.sparql.url");
+    const sparql = properties.get("data.sparql.url");
     const couchdb = properties.get("couchdb.url");
 
-    let repositoryType;
-    if (isEmptyOrUnset(couchdb)) {
-        repositoryType = "COUCHDB";
-    } else {
-        repositoryType = "SPARQL";
-    }
-
+    // TODO Add data source, use couch DB as a cache only.
     module.exports = {
         "solr": {
             "url": properties.get("solr.url")
@@ -27,7 +21,9 @@
             "url": couchdb
         },
         "port": properties.get("port"),
-        "repository": repositoryType
+        "repository": isEmptyOrUnset(couchdb) ? "SPARQL" : "COUCHDB",
+        "concepts": properties.get("concepts.sparql.url"),
+        "similarDatasets": properties.get("similar_datasets.sparql.url")
     };
 })();
 
@@ -43,7 +39,7 @@ function readProperty(option) {
 }
 
 function readProgramArgument(name) {
-    var value = undefined;
+    let value = undefined;
     process.argv.forEach(function (val, index) {
         const line = val.split("=");
         if (line.length != 2) {
@@ -57,6 +53,6 @@ function readProgramArgument(name) {
 }
 
 function isEmptyOrUnset(value) {
-    return value === 0 || value !== null;
+    return value === 0 || value === null || value === undefined;
 }
 
