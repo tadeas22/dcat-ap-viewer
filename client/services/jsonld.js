@@ -72,7 +72,6 @@ triples.type = (entity) => {
     }
     if (entity[RDF.type] !== undefined) {
         // As a fallback for invalid json-ld
-
         return triples.resources(entity, RDF.type);
     }
     return [];

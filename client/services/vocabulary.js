@@ -84,5 +84,24 @@ export const SKOS = {
 };
 
 export const RDF = {
-    "type" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+    "type" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    "label": "http://www.w3.org/2000/01/rdf-schema#label"
 };
+
+// TODO Rename to SSP_?
+
+const SSP_PREFIX = "https://ssp.opendata.cz/slovník/základní/pojem/";
+export const SSP = {
+    "Glosar" : SSP_PREFIX + "glosář",
+    "TypVlastnosti" : SSP_PREFIX + "typ-vlastnosti",
+    "TypOjektu" : SSP_PREFIX + "typ-objektu",
+    "TypVztahu" : SSP_PREFIX + "typ-vztahu",
+};
+
+// TODO Rename to SSP_APPLICATION
+
+export const APP = {
+    "hasProperty" :"https://skod.opendata.cz/slovník/aplikační/máVlastnost",
+    "participateInRelation" : "https://skod.opendata.cz/slovník/aplikační/účastníSeVztahu"
+};
+

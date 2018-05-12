@@ -8,6 +8,8 @@ import {keywordsTagCloudReducer} from "./keyword/tagcloud/keyword-tagloud-reduce
 import {reducer as loadingIndicator} from "./components/loading-indicator"
 import {reducer as similarDataset} from "./dataset/detail/similar-datasets";
 import {reducer as skosConcept} from "./dataset/detail/skos-concept"
+import {reducer as semanticDetail} from "./semantic/detail";
+import {reducer as objectDetail} from "./semantic/detail/object-detail";
 
 // http://redux.js.org/docs/api/combineReducers.html
 const reducers = combineReducers({
@@ -20,10 +22,12 @@ const reducers = combineReducers({
     "organisation": combineReducers({
         "list": organisationListReducer
     }),
-    [loadingIndicator.name] : loadingIndicator.reducer,
+    [loadingIndicator.name]: loadingIndicator.reducer,
     "keywords": keywordsTagCloudReducer,
-    [similarDataset.name] : similarDataset.reducer,
-    [skosConcept.name] : skosConcept.reducer
+    [similarDataset.name]: similarDataset.reducer,
+    [skosConcept.name]: skosConcept.reducer,
+    [semanticDetail.name]: semanticDetail.reducer,
+    [objectDetail.name]: objectDetail.reducer
 });
 
 export default reducers;

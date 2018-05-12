@@ -2,10 +2,15 @@ import React from "react";
 import {connect} from "react-redux";
 import {fetchSkosConcept, onComponentUnmount} from "./skos-concept-action";
 import {conceptsSelector} from "./skos-concept-reducer";
-import TagLine from "./../../../components/tag-line";
+import {LinkTagLine} from "./../../../components/tag-line";
 import {STATUS_FETCHED} from "./../../../services/http-request";
 import {LoaderIndicator} from "./../../../components/loading-indicator";
 import {selectLabel} from "./../../../services/labels";
+import {
+    getUrl,
+    SEMANTIC_DETAIL,
+    SEMANTIC_QUERY
+} from "./../../../application/navigation";
 
 class _SkosConcepts extends React.Component {
 
@@ -14,7 +19,7 @@ class _SkosConcepts extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.concepts.length == nextProps.concepts.length) {
+        if (this.props.concepts.length === nextProps.concepts.length) {
             return;
         }
         nextProps.concepts.forEach((iri) => this.props.fetch(iri));
@@ -30,17 +35,16 @@ class _SkosConcepts extends React.Component {
         const scheme = "https://ssp.opendata.cz/slovník/legislativní/předpis/247/1995/glosář";
 
         const filteredConcepts = Object.values(this.props.data)
-        .filter((entity) => entity.status === STATUS_FETCHED)
-        .filter((entity) => entity.data !== undefined)
-        .filter((entity) => entity.data.inScheme.includes(scheme))
-        .map((entity) => ({
-            "@id" : entity.data["@id"],
-            "label" : selectLabel(entity.data["label"]),
-            "conformsTo": entity.data["conformsTo"]
-        }));
+            .filter((entity) => entity.status === STATUS_FETCHED)
+            .filter((entity) => entity.data !== undefined)
+            .filter((entity) => entity.data.inScheme.includes(scheme))
+            .map((entity) => ({
+                "@id": entity.data["@id"],
+                "label": selectLabel(entity.data["label"]),
+                "conformsTo": entity.data["conformsTo"]
+            }));
 
         const groups = this.groupByConformsTo(filteredConcepts);
-        // this.addLabelsToGroups(filteredConcepts);
 
         return (
             <div>
@@ -49,8 +53,12 @@ class _SkosConcepts extends React.Component {
                     // TODO Use IRI to label translation mechanism.
                     return (
                         <div key={key}>
-                            {/*<b>{value.label}</b>*/}
-                            <TagLine values={value.data.map((entity) => entity["label"])}/>
+                            <LinkTagLine
+                                values={value.data.map((entity) => ({
+                                    "label": entity["label"],
+                                    "href": getUrl(SEMANTIC_DETAIL, {[SEMANTIC_QUERY]: entity["@id"]})
+                                }))}
+                            />
                         </div>
                     )
                 })}
@@ -85,12 +93,6 @@ class _SkosConcepts extends React.Component {
         });
         return groups;
     }
-
-    // addLabelsToGroups(groups) {
-    //     Object.values(groups).forEach((group) => {
-    //         group["label"] = group.legislation[0];
-    //     });
-    // }
 
     componentWillUnmount() {
         this.props.onUnmount();

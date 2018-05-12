@@ -5,6 +5,7 @@ import {DatasetListView} from "../dataset/list/dataset-list-view";
 import {DatasetDetailView} from "../dataset/detail/dataset-detail-view";
 import {OrganisationListView} from "../organisation/list/organisation-list-view";
 import {KeywordsViewView} from "../keyword/tagcloud/keyword-tagloud-view";
+import {SemanticDetailView} from "../semantic/detail"
 import {PageNotFound} from "../system/page-not-found";
 
 // Define application navigation properties
@@ -12,6 +13,7 @@ export const DATASET_LIST_URL = "DATASET_LIST";
 export const DATASET_DETAIL_URL = "DATASET_DETAIL";
 export const ORGANISATION_LIST_URL = "ORGANISATION_LIST";
 export const KEYWORDS_LIST_URL = "KEYWORDS_LIST_URL";
+export const SEMANTIC_DETAIL = "SEMANTIC_DETAIL";
 export const PUBLISHER_QUERY = "PUBLISHER_QUERY";
 export const KEYWORDS_QUERY = "KEYWORDS_QUERY";
 export const FORMAT_QUERY = "FORMAT_QUERY";
@@ -22,6 +24,7 @@ export const SORT_QUERY = "SORT_QUERY";
 export const PAGE_SIZE_QUERY = "PAGE_SIZE_QUERY";
 export const TEMPORAL_START = "TEMPORAL_START";
 export const TEMPORAL_END = "TEMPORAL_END";
+export const SEMANTIC_QUERY = "SEMANTIC_QUERY";
 
 // TODO Extract to a new file as a mapping
 const COMPONENTS = {};
@@ -29,6 +32,7 @@ COMPONENTS[DATASET_LIST_URL] = DatasetListView;
 COMPONENTS[DATASET_DETAIL_URL] = DatasetDetailView;
 COMPONENTS[ORGANISATION_LIST_URL] = OrganisationListView;
 COMPONENTS[KEYWORDS_LIST_URL] = KeywordsViewView;
+COMPONENTS[SEMANTIC_DETAIL] = SemanticDetailView;
 
 const PAGE = "PAGE";
 const QUERY = "QUERY";
@@ -44,6 +48,7 @@ NAVIGATION["cs"][PAGE][DATASET_LIST_URL] = "datové-sady";
 NAVIGATION["cs"][PAGE][DATASET_DETAIL_URL] = "datová-sada";
 NAVIGATION["cs"][PAGE][ORGANISATION_LIST_URL] = "poskytovatelé";
 NAVIGATION["cs"][PAGE][KEYWORDS_LIST_URL] = "klíčová-slova";
+NAVIGATION["cs"][PAGE][SEMANTIC_DETAIL] = "ssp";
 NAVIGATION["cs"][QUERY] = {};
 NAVIGATION["cs"][QUERY][PUBLISHER_QUERY] = "poskytovatel";
 NAVIGATION["cs"][QUERY][KEYWORDS_QUERY] = "klíčová slova";
@@ -55,12 +60,14 @@ NAVIGATION["cs"][QUERY][SORT_QUERY] = "pořadí";
 NAVIGATION["cs"][QUERY][PAGE_SIZE_QUERY] = "velikost stránky";
 NAVIGATION["cs"][QUERY][TEMPORAL_START] = "temporal start";
 NAVIGATION["cs"][QUERY][TEMPORAL_END] = "temporal end";
+NAVIGATION["cs"][QUERY][SEMANTIC_QUERY] = "iri";
 
 NAVIGATION["en"][PAGE] = {};
 NAVIGATION["en"][PAGE][DATASET_LIST_URL] = "datasets";
 NAVIGATION["en"][PAGE][DATASET_DETAIL_URL] = "dataset";
 NAVIGATION["en"][PAGE][ORGANISATION_LIST_URL] = "publishers";
 NAVIGATION["en"][PAGE][KEYWORDS_LIST_URL] = "keywords";
+NAVIGATION["en"][PAGE][SEMANTIC_DETAIL] = "ssp";
 NAVIGATION["en"][QUERY] = {};
 NAVIGATION["en"][QUERY][PUBLISHER_QUERY] = "publisher";
 NAVIGATION["en"][QUERY][KEYWORDS_QUERY] = "keywords";
@@ -72,6 +79,7 @@ NAVIGATION["en"][QUERY][SORT_QUERY] = "sort";
 NAVIGATION["en"][QUERY][PAGE_SIZE_QUERY] = "page size";
 NAVIGATION["en"][QUERY][TEMPORAL_START] = "temporal start";
 NAVIGATION["en"][QUERY][TEMPORAL_END] = "temporal end";
+NAVIGATION["en"][QUERY][SEMANTIC_QUERY] = "iri";
 
 //
 // TODO Split to multiple files
