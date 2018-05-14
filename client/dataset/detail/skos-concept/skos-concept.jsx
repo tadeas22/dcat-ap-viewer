@@ -5,12 +5,14 @@ import {conceptsSelector} from "./skos-concept-reducer";
 import {LinkTagLine} from "./../../../components/tag-line";
 import {STATUS_FETCHED} from "./../../../services/http-request";
 import {LoaderIndicator} from "./../../../components/loading-indicator";
-import {selectLabel} from "./../../../services/labels";
 import {
     getUrl,
     SEMANTIC_DETAIL,
     SEMANTIC_QUERY
 } from "./../../../application/navigation";
+import {labelsSelector, selectLabel} from "./../../../services/labels/";
+
+const SCHEME = "https://ssp.opendata.cz/slovník/legislativní/předpis/247/1995/glosář";
 
 class _SkosConcepts extends React.Component {
 
@@ -32,15 +34,13 @@ class _SkosConcepts extends React.Component {
             )
         }
 
-        const scheme = "https://ssp.opendata.cz/slovník/legislativní/předpis/247/1995/glosář";
-
         const filteredConcepts = Object.values(this.props.data)
             .filter((entity) => entity.status === STATUS_FETCHED)
             .filter((entity) => entity.data !== undefined)
-            .filter((entity) => entity.data.inScheme.includes(scheme))
+            .filter((entity) => entity.data.inScheme.includes(SCHEME))
             .map((entity) => ({
                 "@id": entity.data["@id"],
-                "label": selectLabel(entity.data["label"]),
+                "label": selectLabel(entity.data, this.props.labels),
                 "conformsTo": entity.data["conformsTo"]
             }));
 
@@ -76,7 +76,7 @@ class _SkosConcepts extends React.Component {
         };
         themes.forEach(theme => {
             const conformsTo = theme["conformsTo"];
-            if (conformsTo === undefined || conformsTo.length == 0) {
+            if (conformsTo === undefined || conformsTo.length === 0) {
                 groups[""].data.push(theme);
                 return;
             }
@@ -102,7 +102,8 @@ class _SkosConcepts extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    "data": conceptsSelector(state)
+    "data": conceptsSelector(state),
+    "labels" : labelsSelector(state)
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

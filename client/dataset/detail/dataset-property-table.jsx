@@ -1,7 +1,7 @@
 import React from "react";
 import {Table} from "reactstrap";
 import {getString} from "../../application/strings";
-import {selectLabel} from "./../../services/labels";
+import {selectLabel} from "./../../services/labels/";
 
 // TODO Extract components and add property specification.
 
@@ -45,7 +45,7 @@ function updateDate(value) {
     }
 }
 
-const ContactPoint = ({value}) => {
+const ContactPoint = ({value, labels}) => {
     if (typeof value === "object") {
         let label = value.label;
         let email = getEmail(value);
@@ -57,7 +57,7 @@ const ContactPoint = ({value}) => {
                 label = email;
             }
         } else {
-            label = selectLabel(label);
+            label = selectLabel(label, labels);
         }
         let iri;
         if (email === undefined) {
@@ -72,7 +72,7 @@ const ContactPoint = ({value}) => {
     } else {
         // TODO Check if this branch is ever needed.
         return (
-            <a href={value} rel="nofollow">{selectLabel(value)}</a>
+            <a href={value} rel="nofollow">{selectLabel(value, labels)}</a>
         );
     }
 };
@@ -92,7 +92,7 @@ function getEmail(value) {
 
 
 // TODO Check usage.
-const ContactPoints = ({label, value}) => {
+const ContactPoints = ({label, value, labels}) => {
     if (value === undefined) {
         return null;
     }
@@ -111,7 +111,7 @@ const ContactPoints = ({label, value}) => {
             <td>
                 {
                     valuesAsArray.map((item) => (
-                        <ContactPoint key={item} value={item} />
+                        <ContactPoint key={item} value={item} labels={labels}/>
                     ))
                 }
             </td>
@@ -162,7 +162,7 @@ const UrlRow = ({label, value}) => {
     )
 };
 
-const LabeledUrlRow = ({label, value}) => {
+const LabeledUrlRow = ({label, value, labels}) => {
     if (value === undefined) {
         return null;
     }
@@ -182,7 +182,9 @@ const LabeledUrlRow = ({label, value}) => {
                 {
                     valuesAsArray.map((item) => (
                         <span key={item["@id"]}>
-                            <LabeledUrlValue value={item}/>
+                            <a href={item["@id"]} rel="nofollow">
+                                {selectLabel(item, labels)}
+                            </a>
                             {valuesAsArray.length > 0 && <br/> }
                         </span>
                     ))
@@ -190,12 +192,6 @@ const LabeledUrlRow = ({label, value}) => {
             </td>
         </tr>
     )
-};
-
-const LabeledUrlValue = ({value}) => {
-    return (
-        <a href={value["@id"]} rel="nofollow">{selectLabel(value)}</a>
-    );
 };
 
 const ValueRow = ({label, value}) => {
@@ -213,17 +209,25 @@ const ValueRow = ({label, value}) => {
     )
 };
 
-const DatasetPropertyTable = ({dataset}) => (
+const DatasetPropertyTable = ({dataset, labels}) => (
     <Table>
         <tbody>
         <UrlRow label="s.dataset_iri" value={dataset["@id"]}/>
-        <ContactPoints label="s.contact_point" value={dataset.contactPoints}/>
-        <LabeledUrlRow label="s.publisher" value={dataset.publisher}/>
-        <LabeledUrlRow label="s.topic" value={dataset.themes}/>
+        <ContactPoints label="s.contact_point"
+                       value={dataset.contactPoints}
+                       labels={labels}/>
+        <LabeledUrlRow label="s.publisher"
+                       value={dataset.publisher}
+                       labels={labels}/>
+        <LabeledUrlRow label="s.topic"
+                       value={dataset.themes}
+                       labels={labels}/>
         <UrlRow label="s.access_right" value={dataset.accessRights}/>
         <UrlRow label="s.conforms_to" value={dataset.conformsTo}/>
         <UrlRow label="s.documentation" value={dataset.documentation}/>
-        <LabeledUrlRow label="s.frequency" value={dataset.frequency}/>
+        <LabeledUrlRow label="s.frequency"
+                       value={dataset.frequency}
+                       labels={labels}/>
         <UrlRow label="s.has_version" value={dataset.hasVersion}/>
         <UrlRow label="s.is_version_of" value={dataset.isVersionOf}/>
         <UrlRow label="s.identifier" value={dataset.identifier}/>
@@ -236,12 +240,13 @@ const DatasetPropertyTable = ({dataset}) => (
         <ValueRow label="s.modified" value={dataset.modified}/>
         <UrlRow label="s.sample" value={dataset.sample}/>
         <UrlRow label="s.source" value={dataset.source}/>
-        <LabeledUrlRow label="s.spatial" value={dataset.spatial}/>
+        <LabeledUrlRow label="s.spatial"
+                       value={dataset.spatial}
+                       labels={labels}/>
         <Temporal label="s.temporal" value={dataset.temporal}/>
         <ValueRow label="s.type" value={dataset.type}/>
         <ValueRow label="s.version" value={dataset.version}/>
         <ValueRow label="s.version_notes" value={dataset.versionNotes}/>
-        {/*<UrlRow label="s.catalog_source" value={dataset.catalogSource}/>*/}
         </tbody>
     </Table>
 );

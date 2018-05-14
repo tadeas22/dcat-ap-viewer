@@ -8,7 +8,6 @@ import {
     SET_DISTRIBUTION_PAGE_INDEX,
     SET_DISTRIBUTION_PAGE_SIZE
 } from "./dataset-detail-actions";
-import {FETCH_LABEL_SUCCESS} from "./../../services/labels";
 import {
     STATUS_INITIAL,
     STATUS_FETCHING,
@@ -28,8 +27,6 @@ const initialState = {
     "distributions": {},
 };
 
-// TODO Extract "labels" service?
-
 // TODO Extract state transforming functions.
 export const datasetDetailReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -39,8 +36,6 @@ export const datasetDetailReducer = (state = initialState, action) => {
             return onDatasetRequestSuccess(state, action);
         case FETCH_DATASET_FAILED:
             return onDatasetRequestFailed(state, action);
-        case FETCH_LABEL_SUCCESS:
-            return onLabelRequestSuccess(state, action);
         case FETCH_DISTRIBUTION_REQUEST:
             return onDistributionRequest(state, action);
         case FETCH_DISTRIBUTION_SUCCESS:
@@ -82,73 +77,6 @@ function onDatasetRequestFailed(state, action) {
         "dataset": {
             ...action.data,
             "status": action.error.status
-        }
-    };
-}
-
-function onLabelRequestSuccess(state, action) {
-    if (action.identifier.target === "dataset") {
-        return {
-            ...state,
-            "dataset": addLabelToDataset(state["dataset"], action)
-        }
-    } else if (action.identifier.target === "distribution") {
-        return {
-            ...state,
-            "distributions": addLabelToDistributions(
-                state["distributions"], action)
-        }
-    } else {
-        return state;
-    }
-}
-
-function addLabelToDataset(dataset, action) {
-    if (action.identifier.index) {
-        return addLabelToDatasetArray(dataset, action);
-    } else {
-        return addLabelToDatasetObject(dataset, action);
-    }
-}
-
-function addLabelToDatasetArray(dataset, action) {
-    const {key, index} = action.identifier;
-    return {
-        ...dataset,
-        [key]: addToArrayItem(index, dataset[key], action.data)
-    };
-}
-
-function addToArrayItem(index, arrayToUpdate, toAdd) {
-    const output = arrayToUpdate.slice();
-    output[index] = {
-        ...output[index],
-        ...toAdd
-    };
-    return output;
-}
-
-function addLabelToDatasetObject(dataset, action) {
-    const {key} = action.identifier;
-    return {
-        ...dataset,
-        [key]: {
-            ...dataset[key],
-            ...action.data
-        }
-    }
-}
-
-function addLabelToDistributions(distributions, action) {
-    const {iri, key} = action.identifier;
-    return {
-        ...distributions,
-        [iri]: {
-            ...distributions[iri],
-            [key]: {
-                ...distributions[iri][key],
-                ...action.data
-            }
         }
     };
 }

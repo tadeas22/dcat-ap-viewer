@@ -2,14 +2,14 @@ import React from "react";
 import {Table} from "reactstrap";
 import Paginator from "../../components/paginator";
 import {getString} from "../../application/strings";
-import {selectLabel} from "./../../services/labels";
+import {selectLabel} from "./../../services/labels/";
 import {isStatusLoading, isStatusFailed} from "./../../services/http-request";
 
 class DistributionRow extends React.Component {
 
     componentWillMount() {
         const dist = this.props.distribution;
-        if (dist == undefined) {
+        if (dist === undefined) {
             this.props.fetchDistribution(this.props.iri);
         }
     }
@@ -63,7 +63,7 @@ class DistributionRow extends React.Component {
         if (dist_entity.format === undefined) {
             formatLabel = undefined;
         } else {
-            formatLabel = selectLabel(dist_entity.format);
+            formatLabel = selectLabel(dist_entity.format, this.props.labels);
         }
 
         return (
@@ -71,27 +71,27 @@ class DistributionRow extends React.Component {
                 <td>
                     <a href={url} rel="nofollow" className="distribution-link">
                         {title}
-                        </a>
+                    </a>
                 </td>
                 <td>
                     {dist_entity.format !== undefined &&
                     <a href={dist_entity.format.iri} rel="nofollow">
                         {formatLabel}
-                        </a>
+                    </a>
                     }
                 </td>
                 <td>
                     {dist_entity.conformsTo !== undefined &&
                     <a href={dist_entity.conformsTo} rel="nofollow">
                         {dist_entity.conformsTo}
-                        </a>
+                    </a>
                     }
                 </td>
                 <td>
                     {dist_entity.license !== undefined &&
                     <a href={dist_entity.license} rel="nofollow">
                         {dist_entity.license}
-                        </a>
+                    </a>
                     }
                 </td>
             </tr>
@@ -104,9 +104,7 @@ class DistributionList extends React.Component {
     render() {
         const distributionIris = this.props.keys;
         if (distributionIris === undefined) {
-            return (
-                <div></div>
-            )
+            return null;
         }
 
         const distributions = this.props.values;
@@ -125,6 +123,7 @@ class DistributionList extends React.Component {
                     iri={key}
                     distribution={distribution}
                     fetchDistribution={this.props.fetchDistribution}
+                    labels={this.props.labels}
                 />
             ));
         }
@@ -150,8 +149,7 @@ class DistributionList extends React.Component {
                     pageIndex={this.props.pageIndex}
                     pageSize={this.props.pageSize}
                     onIndexChange={this.props.setPage}
-                    onSizeChange={this.props.setPageSize}
-                />
+                    onSizeChange={this.props.setPageSize}/>
             </div>
         );
     }

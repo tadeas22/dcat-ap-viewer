@@ -8,7 +8,7 @@ import {
     VCARD,
     SCHEMA
 } from "./../../services/vocabulary";
-import {fetchLabel} from "./../../services/labels";
+import {fetchLabel} from "./../../services/labels/";
 
 // TODO Merge with action or leave in separated file.
 
@@ -18,7 +18,6 @@ export function jsonLdToDataset(jsonld) {
     // TODO Change to getString with specific structure (object with languages).
     const mandatory = {
         "@id": triples.id(dataset),
-        "title": triples.string(dataset, DCTERMS.title),
         "description": triples.string(dataset, DCTERMS.description)
     };
 

@@ -23,8 +23,9 @@ export function fetchDataset(iri) {
         dispatch(fetchDatasetRequest(iri));
         const url = "/api/v1/resource/dataset?iri=" + encodeURI(iri);
         fetchJsonCallback(url, (json) => {
-            const data = jsonLdToDataset(normalizeData(json));
-            dispatch(fetchDatasetSuccess(data));
+            const jsonld = normalizeData(json);
+            const data = jsonLdToDataset(jsonld);
+            dispatch(fetchDatasetSuccess(data, jsonld));
             requestLabelsForDataset(data, dispatch);
         }, (error) => {
             dispatch(fetchDatasetFailed(error));
@@ -48,10 +49,11 @@ function fetchDatasetRequest(iri) {
     });
 }
 
-function fetchDatasetSuccess(data) {
+function fetchDatasetSuccess(data, jsonld) {
     return addLoaderStatusOff({
         "type": FETCH_DATASET_SUCCESS,
-        "data": data
+        "data": data,
+        "jsonld": jsonld
     });
 }
 

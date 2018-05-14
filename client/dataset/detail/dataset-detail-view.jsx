@@ -21,20 +21,29 @@ import {Link} from "react-router";
 import {getString} from "../../application/strings";
 import setPageTitle from "../../services/page-title";
 import {isDataReady} from "./../../services/http-request";
-import {selectLabel, selectLabels} from "./../../services/labels";
+import {
+    selectLabel,
+    selectLabels,
+    labelsSelector,
+    selectString
+} from "./../../services/labels/";
 import {HttpRequestStatus} from "./../../application/http-request-status";
 import {SkosConcepts} from "./skos-concept";
 import {SimilarDatasets} from "./similar-datasets";
 import {themesSelector} from "./dataset-detail-reducer";
 
+// TODO Move to other components.
 class DatasetMetadataComponent extends React.Component {
     render() {
+
+        const label = (value) => selectLabel(value, this.props.labels);
+
         const dataset = this.props.dataset;
         let content = '\n{\n' +
             '"@context":"http://schema.org/",\n' +
             '"@type":"Dataset",\n' +
-            '"name":"' + selectLabel(dataset["title"]) + '",\n' +
-            '"description":"' + selectLabel(dataset["description"]) + '",\n' +
+            '"name":"' + label(dataset) + '",\n' +
+            '"description":"' + selectString(dataset["description"]) + '",\n' +
             '"url":"' + dataset["@id"] + '"\n';
 
         if (dataset["catalog"] !== undefined) {
@@ -50,7 +59,7 @@ class DatasetMetadataComponent extends React.Component {
         }
 
         if (dataset["keywords"] !== undefined) {
-            content += ',"keywords":' + JSON.stringify(selectLabels(dataset["keywords"])) + '\n';
+            content += ',"keywords":' + JSON.stringify(this.props.keywordsLabels) + '\n';
         }
 
         if (dataset["publisher"] !== undefined) {
@@ -58,7 +67,7 @@ class DatasetMetadataComponent extends React.Component {
                 '"creator":{\n' +
                 ' "@type":"Organization",\n' +
                 ' "url": "' + dataset["publisher"]["@id"] + '",\n' +
-                ' "name":"' + selectLabel(dataset["publisher"]) + '"\n' +
+                ' "name":"' + label(dataset["publisher"]) + '"\n' +
                 ' }\n' +
                 '}\n';
         }
@@ -89,11 +98,11 @@ class DatasetDetailViewComponent extends React.Component {
         }
     }
 
-
     render() {
         setPageTitle(getString("title.dataset"));
 
         const dataset = this.props.dataset;
+        const label = (value) => selectLabel(value, this.props.labels);
 
         if (!isDataReady(dataset.status)) {
             return (
@@ -104,12 +113,12 @@ class DatasetDetailViewComponent extends React.Component {
         const distributions = this.props.distributions;
         const ui = this.props.ui;
 
-        // TODO Use IRI as a filter.
+        // TODO Use IRI as a filter. Require change in index.
         const publisherUrl = getUrl(DATASET_LIST_URL, {
-            [PUBLISHER_QUERY]: selectLabel(dataset.publisher)
+            [PUBLISHER_QUERY]: label(dataset.publisher)
         });
 
-        const title = selectLabel(dataset.title);
+        const title = label(dataset["@id"]);
         setPageTitle(title);
 
         const extensionStyle = {
@@ -120,16 +129,22 @@ class DatasetDetailViewComponent extends React.Component {
             "borderColor": "#E7E6E3"
         };
 
+        const keywordsLabels = [];
+        for (let index in dataset.keywords) {
+            keywordsLabels.push(selectString(dataset.keywords[index]));
+        }
+
         return (
             <Container>
                 <div style={{"marginTop": "2em"}}>
                     <h3>{title}</h3>
                     <h4>
-                        <Link
-                            to={publisherUrl}>{selectLabel(dataset.publisher)}</Link>
+                        <Link to={publisherUrl}>
+                            {label(dataset.publisher)}
+                        </Link>
                     </h4>
-                    <p>{selectLabel(dataset.description)}</p>
-                    <TagLine values={selectLabels(dataset.keywords)}/>
+                    <p>{selectString(dataset.description)}</p>
+                    <TagLine values={keywordsLabels}/>
                 </div>
                 <div style={extensionStyle}>
                     <SkosConcepts concepts={this.props.themes}/>
@@ -138,7 +153,9 @@ class DatasetDetailViewComponent extends React.Component {
                     <SimilarDatasets datasetIri={dataset["@id"]}/>
                 </div>
                 <div style={{"marginTop": "2em"}}>
-                    <DatasetPropertyTable dataset={dataset}/>
+                    <DatasetPropertyTable
+                        dataset={dataset}
+                        labels={this.props.labels}/>
                 </div>
                 <div style={{"marginTop": "2em"}}>
                     <DistributionList
@@ -149,9 +166,13 @@ class DatasetDetailViewComponent extends React.Component {
                         setPageSize={this.props.setDistributionPageSize}
                         pageIndex={ui.distributionsPageIndex}
                         pageSize={ui.distributionsPageSize}
+                        labels={this.props.labels}
                     />
                 </div>
-                <DatasetMetadataComponent dataset={dataset}/>
+                <DatasetMetadataComponent
+                    dataset={dataset}
+                    labels={this.props.labels}
+                    keywordsLabels={keywordsLabels}/>
             </Container>
         );
     }
@@ -161,7 +182,8 @@ const mapStateToProps = (state, ownProps) => ({
     "ui": state.dataset.detail.ui,
     "dataset": state.dataset.detail.dataset,
     "distributions": state.dataset.detail.distributions,
-    "themes": themesSelector(state)
+    "themes": themesSelector(state),
+    "labels": labelsSelector(state)
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

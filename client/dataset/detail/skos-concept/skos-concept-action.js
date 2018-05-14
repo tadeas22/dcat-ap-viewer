@@ -10,11 +10,11 @@ export function fetchSkosConcept(iri) {
     return (dispatch, getState) => {
         // TODO Add support for caching.
         dispatch(fetchSkosConceptRequest(iri));
-        const url = "/api/v1/resource/semantic/concept?iri=" +
+        const url = "/api/v1/semantic/concept?iri=" +
             encodeURI(iri);
         fetchJsonCallback(url, (json) => {
             const data = convertData(json);
-            dispatch(fetchSkosConceptSuccess(iri, data));
+            dispatch(fetchSkosConceptSuccess(iri, data, json));
         }, (error) => {
             // TODO Add error handling.
         });
@@ -28,7 +28,6 @@ function convertData(jsonld) {
     const concept = graph.getByType(jsonld, SKOS.Concept);
     return {
         "@id": triples.id(concept),
-        "label": triples.string(concept, SKOS.prefLabel),
         "inScheme": triples.resources(concept, SKOS.inScheme),
         "conformsTo": triples.resources(concept, DCTERMS.conformsTo)
     }
@@ -41,11 +40,12 @@ function fetchSkosConceptRequest(iri) {
     }
 }
 
-function fetchSkosConceptSuccess(iri, data) {
+function fetchSkosConceptSuccess(iri, data, jsonld) {
     return {
         "type": FETCH_CONCEPT_SUCCESS,
         "iri": iri,
-        "data": data
+        "data": data,
+        "jsonld": jsonld
     }
 }
 

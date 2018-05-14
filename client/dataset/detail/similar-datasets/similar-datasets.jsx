@@ -5,6 +5,7 @@ import {similarSelector} from "./similar-datasets-reducer";
 import {isDataReady} from "./../../../services/http-request";
 import {LoaderIndicator} from "./../../../components/loading-indicator";
 import {DatasetsTable} from "../../../components/dataset-table";
+import {labelsSelector} from "../../../services/labels/";
 
 class _SimilarDatasets extends React.Component {
 
@@ -19,14 +20,17 @@ class _SimilarDatasets extends React.Component {
             )
         }
         return (
-            <DatasetsTable datasets={this.props.similar.data}/>
+            <DatasetsTable
+                datasets={this.props.similar.data}
+                labels={this.props.labels}/>
         );
     }
 
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    "similar": similarSelector(state)
+    "similar": similarSelector(state),
+    "labels": labelsSelector(state)
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

@@ -4,7 +4,7 @@ import {fetchObjectDetail, onObjectDetailUnmount} from "./object-detail-action";
 import {dataSelector} from "./object-detail-reducer";
 import {isDataReady} from "../../../services/http-request";
 import {LoaderIndicator} from "../../../components/loading-indicator"
-import {selectLabel} from "./../../../services/labels";
+import {selectLabel, labelsSelector} from "./../../../services/labels/";
 import {
     SEMANTIC_DETAIL,
     SEMANTIC_QUERY,
@@ -18,14 +18,13 @@ class _ObjectDetail extends React.Component {
     }
 
     render() {
+        const dataEntry = this.props.data;
 
-        if (!isDataReady(this.props.data.status)) {
-            return (
-                <LoaderIndicator/>
-            )
+        if (!isDataReady(dataEntry.status)) {
+            return null;
         }
 
-        const tableStyle = {
+        const divStyle = {
             "border": "1px solid #E7E6E3",
             "width": "100%",
             "padding": "1rem"
@@ -35,29 +34,26 @@ class _ObjectDetail extends React.Component {
             "marginBottom": "0"
         };
 
-        const data = this.props.data.data;
-        console.log(">", data);
+        const data = dataEntry.data;
 
         return (
-            <div style={tableStyle}>
-                Detail sémantického pojmu:
-                <br/>
+            <div style={divStyle}>
                 Vlastnosti:
                 <ul style={listStyle}>
                     {data.properties.map((entry) => (
                         <li key={entry["@id"]}>
                             <a href={this.semanticDetailLink(entry["@id"])}>
-                                {selectLabel(entry["label"])}
+                                {selectLabel(entry, this.props.labels)}
                             </a>
                         </li>
                     ))}
                 </ul>
                 Je ve vztahu:
                 <ul style={listStyle}>
-                    {data.inRelations.map((entry) => (
+                    {data.domain.map((entry) => (
                         <li key={entry["@id"]}>
                             <a href={this.semanticDetailLink(entry["@id"])}>
-                                {selectLabel(entry["label"])}
+                                {selectLabel(entry, this.props.labels)}
                             </a>
                         </li>
                     ))}
@@ -71,13 +67,14 @@ class _ObjectDetail extends React.Component {
     }
 
     semanticDetailLink(iri) {
-        return getUrl(SEMANTIC_DETAIL, {SEMANTIC_QUERY: iri})
+        return getUrl(SEMANTIC_DETAIL, {[SEMANTIC_QUERY]: iri})
     }
 
 }
 
 const mapStateToProps = (state, ownProps) => ({
     "data": dataSelector(state),
+    "labels": labelsSelector(state)
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

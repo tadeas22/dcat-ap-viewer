@@ -24,7 +24,7 @@ export function fetchSsp(iri) {
         const url = "/api/v1/resource/semantic/concept-detail?iri=" + encodeURI(iri);
         fetchJsonCallback(url, (json) => {
             const data = convertData(json);
-            dispatch(fetchSspSuccess(iri, data));
+            dispatch(fetchSspSuccess(iri, data, json));
         }, (error) => {
             // TODO Add error handling.
         });
@@ -64,11 +64,12 @@ function fetchSspRequest(iri) {
     });
 }
 
-function fetchSspSuccess(iri, data) {
+function fetchSspSuccess(iri, data, jsonld) {
     return addLoaderStatusOff({
         "type": FETCH_SSP_SUCCESS,
         "iri": iri,
-        "data": data
+        "data": data,
+        "jsonld": jsonld
     });
 }
 
@@ -80,7 +81,8 @@ export function fetchAnnotatedDatasets(iri) {
             encodeURI(iri);
         fetchJsonCallback(url, (json) => {
             const data = convertResponseToData(json);
-            dispatch(fetchAnnotatedDatasetsSuccess(data));
+            const jsonld = convertResponseToJsonLd(json);
+            dispatch(fetchAnnotatedDatasetsSuccess(data, jsonld));
         }, (error) => {
             // TODO Error handling.
         });
@@ -96,10 +98,32 @@ function fetchAnnotatedDatasetsRequest() {
 function convertResponseToData(json) {
     return json.results.bindings.map((binding) => ({
         "@id": binding["dataset"]["value"],
-        "title": getOrDefault(binding["title"], "value", ""),
         "publisher": getOrDefault(binding["publisher"], "value", ""),
-        "publisherLabel": getOrDefault(binding["publisherLabel"], "value", "")
     }));
+}
+
+function convertResponseToJsonLd(json) {
+    const entries = [];
+
+    json.results.bindings.map((binding) => {
+        const title = getOrDefault(binding["title"], "value", "");
+        entries.push({
+            "@id": binding["dataset"]["value"],
+            [DCTERMS.title]: title
+        });
+        const publisher = getOrDefault(binding["publisher"], "value", "");
+        const publisherLabel = getOrDefault(binding["publisherLabel"], "value", "");
+        if (publisher !== undefined && publisherLabel !== undefined) {
+            entries.push({
+                "@id": publisher,
+                [DCTERMS.title]: publisherLabel
+            });
+        }
+    });
+
+    return {
+        "@graph": entries
+    }
 }
 
 function getOrDefault(value, predicate, defaultValue) {
@@ -110,9 +134,10 @@ function getOrDefault(value, predicate, defaultValue) {
     }
 }
 
-function fetchAnnotatedDatasetsSuccess(data) {
+function fetchAnnotatedDatasetsSuccess(data, jsonld) {
     return {
         "type": FETCH_ANNOTATED_DATASET_SUCCESS,
-        "data": data
+        "data": data,
+        "jsonld": jsonld
     };
 }

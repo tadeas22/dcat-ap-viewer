@@ -10,6 +10,7 @@ import {reducer as similarDataset} from "./dataset/detail/similar-datasets";
 import {reducer as skosConcept} from "./dataset/detail/skos-concept"
 import {reducer as semanticDetail} from "./semantic/detail";
 import {reducer as objectDetail} from "./semantic/detail/object-detail";
+import {reducer as labels} from "./services/labels";
 
 // http://redux.js.org/docs/api/combineReducers.html
 const reducers = combineReducers({
@@ -28,6 +29,7 @@ const reducers = combineReducers({
     [skosConcept.name]: skosConcept.reducer,
     [semanticDetail.name]: semanticDetail.reducer,
     [objectDetail.name]: objectDetail.reducer
+    [labels.name]: labels.reducer,
 });
 
 export default reducers;

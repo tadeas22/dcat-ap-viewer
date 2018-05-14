@@ -7,7 +7,7 @@ import {getString} from "../../application/strings";
 import setPageTitle from "../../services/page-title";
 import {isDataReady} from "../../services/http-request";
 import {HttpRequestStatus} from "./../../application/http-request-status";
-import {selectLabel} from "../../services/labels";
+import {selectLabel, labelsSelector} from "../../services/labels/";
 import {SSP} from "../../services/vocabulary";
 import {DatasetsTable} from "../../components/dataset-table";
 import {ObjectDetail} from "./object-detail";
@@ -28,16 +28,16 @@ class _SemanticDetailView extends React.Component {
             )
         }
         const data = dataEntry.data;
-        const label = selectLabel(data.label);
+        const label = selectLabel(data, this.props.labels);
         setPageTitle(label);
         return (
             <Container>
                 <div style={{"marginTop": "2em"}}>
                     <h3>{label}</h3>
-                    <p>{selectLabel(data.glossary.label)}</p>
+                    <p>{selectLabel(data.glossary, this.props.labels)}</p>
                 </div>
                 <Legislation conformsTo={data["conformsTo"]}/>
-                {data["@types"].includes(SSP.TypOjektu) ?
+                {data["@types"].includes(SSP.TypObjektu) ?
                     <div>
                         <br/>
                         <ObjectDetail iri={data["@id"]}/>
@@ -58,7 +58,8 @@ class _SemanticDetailView extends React.Component {
                 {isDataReady(this.props.datasets.status) ?
                     <div>
                         <br/>
-                        <DatasetsTable datasets={this.props.datasets.data}/>
+                        <DatasetsTable datasets={this.props.datasets.data}
+                                       labels={this.props.labels}/>
                     </div>
                     : null}
                 <br/>
@@ -70,7 +71,8 @@ class _SemanticDetailView extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
     "data": detailSelector(state),
-    "datasets": datasetSelector(state)
+    "datasets": datasetSelector(state),
+    "labels": labelsSelector(state)
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

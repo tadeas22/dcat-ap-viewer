@@ -7,9 +7,9 @@ import {
     DATASET_LIST_URL,
     PUBLISHER_QUERY
 } from "../application/navigation";
-import {selectLabel} from "../services/labels";
+import {selectLabel} from "../services/labels/";
 
-export const DatasetsTable = ({datasets}) => {
+export const DatasetsTable = ({datasets, labels}) => {
 
     const divStyle = {
         "border": "1px solid #E7E6E3",
@@ -34,8 +34,6 @@ export const DatasetsTable = ({datasets}) => {
         "paddingLeft": "1rem"
     };
 
-    console.log(">", datasets);
-
     return (
         <div style={divStyle}>
             Související datové sady:<br/>
@@ -45,13 +43,13 @@ export const DatasetsTable = ({datasets}) => {
                     <tr key={dataset["@id"]}>
                         <td style={labelStyle}>
                             <Link to={datasetUrl(dataset["@id"])}>
-                                {dataset["title"]}
+                                {selectLabel(dataset, labels)}
                             </Link>
                         </td>
                         <td style={providerStyle}>
                             <a href={publisherUrl(dataset["publisher"])}
                                target="_blank">
-                                {dataset["publisher"]}
+                                {selectLabel(dataset["publisher"], labels)}
                             </a>
                         </td>
                     </tr>
@@ -74,3 +72,5 @@ function publisherUrl(publisherLabel) {
         [PUBLISHER_QUERY]: publisherLabel
     });
 }
+
+// TODO Add property specification with: datasets, labels

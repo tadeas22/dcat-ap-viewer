@@ -3,13 +3,10 @@ import {
     DCAT,
     DCTERMS,
     FOAF,
-    OWL,
     ADMS,
-    VCARD,
-    SCHEMA,
     SPDX
 } from "./../../services/vocabulary";
-import {fetchLabel} from "./../../services/labels";
+import {fetchLabel} from "./../../services/labels/";
 
 
 // TODO Merge with action or leave in separated file.
@@ -43,7 +40,6 @@ export function jsonLdToDistribution(jsonld) {
         "issued": triples.value(distribution, DCTERMS.issued),
         "rights": triples.resource(distribution, DCTERMS.rights),
         "status": triples.resource(distribution, ADMS.status),
-        "title": triples.values(distribution, DCTERMS.title),
         "modified": triples.resource(distribution, DCTERMS.modified)
     };
 
