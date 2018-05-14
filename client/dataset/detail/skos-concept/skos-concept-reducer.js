@@ -44,6 +44,10 @@ function onConceptFetchRequest(state, action) {
 }
 
 function onConceptFetchSuccess(state, action) {
+    if (state[action.iri] === undefined ||
+        state[action.iri].status !== STATUS_FETCHING) {
+        return state;
+    }
     return {
         ...state,
         [action.iri]: {
