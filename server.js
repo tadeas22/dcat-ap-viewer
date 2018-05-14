@@ -11,11 +11,12 @@ function initializeParsers(app) {
 function initializeRoutes(app) {
     app.use("/api/v1/solr", require("./server/routes/solr"));
     app.use("/api/v1/resource/", require("./server/routes/resource"));
+    app.use("/api/v1/semantic/", require("./server/routes/semantic"));
 }
 
 function initializeWebpack(app) {
     const webpack = require("webpack");
-    const webpackConfig = require("./webpack.develop.config.js");
+    const webpackConfig = getWebpackConfiguration();
     const webpackMiddleware = require("webpack-dev-middleware");
     //
     const compiler = webpack(webpackConfig);
@@ -27,6 +28,16 @@ function initializeWebpack(app) {
         }
     }));
     initializeRoutesForStaticResources(app);
+}
+
+function getWebpackConfiguration() {
+    if (process.env.NODE_ENV === "production") {
+        console.log("Production mode.");
+        return require("./webpack.production.config.js");
+    } else {
+        console.log("Develop mode.");
+        return require("./webpack.develop.config.js");
+    }
 }
 
 function initializeRoutesForStaticResources(app) {
@@ -56,7 +67,7 @@ function startServer(app) {
     });
 }
 
-(()=> {
+(() => {
     const express = require("express");
     const app = express();
     initializeParsers(app);

@@ -21,7 +21,7 @@ export const FETCH_ANNOTATED_DATASET_SUCCESS =
 export function fetchSsp(iri) {
     return (dispatch) => {
         dispatch(fetchSspRequest(iri));
-        const url = "/api/v1/resource/semantic/concept-detail?iri=" + encodeURI(iri);
+        const url = "/api/v1/semantic/concept-detail?iri=" + encodeURI(iri);
         fetchJsonCallback(url, (json) => {
             const data = convertData(json);
             dispatch(fetchSspSuccess(iri, data, json));
@@ -77,7 +77,7 @@ function fetchSspSuccess(iri, data, jsonld) {
 export function fetchAnnotatedDatasets(iri) {
     return (dispatch) => {
         dispatch(fetchAnnotatedDatasetsRequest());
-        const url = "/api/v1/resource/semantic/annotated-datasets?iri=" +
+        const url = "/api/v1/semantic/annotated-datasets?iri=" +
             encodeURI(iri);
         fetchJsonCallback(url, (json) => {
             const data = convertResponseToData(json);

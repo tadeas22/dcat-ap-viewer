@@ -10,7 +10,7 @@ export function fetchObjectDetail(iri) {
     return (dispatch, getState) => {
         // TODO Add support for caching.
         dispatch(fetchObjectDetailRequest(iri));
-        const url = "/api/v1/resource/semantic/object-detail?iri=" +
+        const url = "/api/v1/semantic/object-detail?iri=" +
             encodeURI(iri);
         fetchJsonCallback(url, (json) => {
             const data = convertData(json, iri);
