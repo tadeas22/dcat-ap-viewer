@@ -1,14 +1,11 @@
 import React from "react";
-import {Badge} from "reactstrap";
 import {PropTypes} from "prop-types";
-import {selectLabel} from "../services/labels";
+import {Badge} from "reactstrap";
 import {Link} from "react-router";
 
 const TagLine = ({values, size = 1}) => {
     if (values === undefined) {
-        return (
-            <div></div>
-        )
+        return null;
     }
     return (
         <div style={{"marginTop": "0.2em"}}>
@@ -38,9 +35,7 @@ export default TagLine;
 
 export const LinkTagLine = ({values, size = 1}) => {
     if (values === undefined) {
-        return (
-            <div></div>
-        )
+        return null;
     }
     return (
         <div style={{"marginTop": "0.2em"}}>
