@@ -117,13 +117,13 @@ const Legislation = ({conformsTo}) => {
     return (
         <div style={tableStyle}>
             Zákony:
-            {
-                conformsTo.map((link) => (
-                    <div key={link}>
-                        <a href={link}>{link}</a>
-                    </div>
-                ))
-            }
+            <ul>
+                {conformsTo.map((entry) => (
+                    <li key={entry["link"]}>
+                        <a href={entry["link"]}>{entry["label"]}</a>
+                    </li>
+                ))}
+            </ul>
         </div>
     )
 };

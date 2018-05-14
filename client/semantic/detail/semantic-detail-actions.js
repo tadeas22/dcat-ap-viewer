@@ -1,14 +1,10 @@
 import {fetchJsonCallback} from "../../services/http-request";
-import {RDF, DCTERMS, SKOS, SSP} from "../../services/vocabulary";
+import {RDF, DCTERMS, SKOS, SSP, RDFS} from "../../services/vocabulary";
 import {graph, triples} from "../../services/jsonld";
 import {
     addLoaderStatusOn,
     addLoaderStatusOff
 } from "../../components/loading-indicator";
-import {
-    FETCH_SIMILAR_REQUEST,
-    FETCH_SIMILAR_SUCCESS
-} from "../../dataset/detail/similar-datasets/similar-datasets-actions";
 
 export const FETCH_SSP_REQUEST = "FETCH_SSP_REQUEST";
 export const FETCH_SSP_SUCCESS = "FETCH_SSP_SUCCESS";
@@ -36,14 +32,26 @@ function convertData(jsonld) {
         return undefined;
     }
     const concept = graph.getByType(jsonld, SKOS.Concept);
+    const conformsTo = triples.resources(concept, DCTERMS.conformsTo)
+        .map((iri) => {
+            const entity = graph.getByResource(jsonld, iri);
+            return {
+                // TODO Query for label.
+                "label": esbirkaIriToLabel(iri),
+                "link": triples.resource(entity, RDFS.seeAlso)
+            }
+        });
     return {
         "@id": triples.id(concept),
         "@types": triples.type(concept),
-        "label": triples.string(concept, SKOS.prefLabel),
         "inScheme": triples.resources(concept, SKOS.inScheme),
-        "conformsTo": triples.resources(concept, DCTERMS.conformsTo),
+        "conformsTo": conformsTo,
         "glossary": convertGlossary(jsonld)
     }
+}
+
+function esbirkaIriToLabel(iri) {
+    return iri.replace("https://esbirka.opendata.cz/zdroj/předpis/", "");
 }
 
 function convertGlossary(jsonld) {
