@@ -10,12 +10,10 @@ import {
 } from "./../../../services/http-request";
 
 
-// TODO Filter concepts here instead of components.
-
 const reducerName = "object-detail";
 
 const initialState = {
-    "status" : STATUS_INITIAL
+    "status": STATUS_INITIAL
 };
 
 function reducer(state = initialState, action) {
@@ -26,7 +24,7 @@ function reducer(state = initialState, action) {
             return onObjectDetailFetchSuccess(state, action);
         case OBJECT_DETAIL_UNMOUNT:
             return {
-                "status" : STATUS_INITIAL
+                "status": STATUS_INITIAL
             };
         default:
             return state
