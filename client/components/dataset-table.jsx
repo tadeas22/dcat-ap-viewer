@@ -7,13 +7,20 @@ import {
     DATASET_LIST_URL,
     PUBLISHER_QUERY
 } from "../application/navigation";
+import {selectLabel} from "../services/labels";
 
 export const DatasetsTable = ({datasets}) => {
-    const tableStyle = {
+
+    const divStyle = {
         "border": "1px solid #E7E6E3",
-        "width": "100%"
+        "width": "100%",
+        "padding": "0.5rem"
     };
 
+    const tableStyle = {
+        "border": "1px solid #E7E6E3",
+        "margin": "1rem"
+    };
 
     const labelStyle = {
         "border": "1px solid #E7E6E3",
@@ -27,8 +34,11 @@ export const DatasetsTable = ({datasets}) => {
         "paddingLeft": "1rem"
     };
 
+    console.log(">", datasets);
+
     return (
-        <div>
+        <div style={divStyle}>
+            Související datové sady:<br/>
             <table style={tableStyle}>
                 <tbody>
                 {datasets.map((dataset) => (
@@ -41,7 +51,7 @@ export const DatasetsTable = ({datasets}) => {
                         <td style={providerStyle}>
                             <a href={publisherUrl(dataset["publisher"])}
                                target="_blank">
-                                {dataset["publisherLabel"]}
+                                {dataset["publisher"]}
                             </a>
                         </td>
                     </tr>

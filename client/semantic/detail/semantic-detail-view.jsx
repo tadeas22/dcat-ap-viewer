@@ -36,7 +36,6 @@ class _SemanticDetailView extends React.Component {
                     <h3>{label}</h3>
                     <p>{selectLabel(data.glossary.label)}</p>
                 </div>
-                {data["@id"]}
                 <Legislation conformsTo={data["conformsTo"]}/>
                 {data["@types"].includes(SSP.TypOjektu) ?
                     <div>

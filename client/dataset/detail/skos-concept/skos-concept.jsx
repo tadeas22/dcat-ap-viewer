@@ -47,7 +47,8 @@ class _SkosConcepts extends React.Component {
         const groups = this.groupByConformsTo(filteredConcepts);
 
         return (
-            <div>
+            <div style={{"padding":"0.4rem"}}>
+                Pojmy:<br/><br/>
                 {Object.keys(groups).map((key) => {
                     const value = groups[key];
                     // TODO Use IRI to label translation mechanism.

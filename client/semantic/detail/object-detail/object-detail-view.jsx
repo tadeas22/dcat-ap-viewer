@@ -28,8 +28,7 @@ class _ObjectDetail extends React.Component {
         const tableStyle = {
             "border": "1px solid #E7E6E3",
             "width": "100%",
-            "padding": "1rem",
-            "marginTop": "1rem"
+            "padding": "1rem"
         };
 
         const listStyle = {
@@ -41,7 +40,7 @@ class _ObjectDetail extends React.Component {
 
         return (
             <div style={tableStyle}>
-                Detail sémantického objektu:
+                Detail sémantického pojmu:
                 <br/>
                 Vlastnosti:
                 <ul style={listStyle}>

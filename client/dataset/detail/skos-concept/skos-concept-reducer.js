@@ -9,7 +9,7 @@ import {
 } from "./../../../services/http-request";
 
 
-// TODO Filter concepts here instead of components.
+// TODO Filter concepts here instead of in a component.
 
 const reducerName = "skos-concepts";
 
