@@ -8,13 +8,12 @@ export const OBJECT_DETAIL_UNMOUNT = "OBJECT_DETAIL_UNMOUNT";
 
 export function fetchObjectDetail(iri) {
     return (dispatch, getState) => {
-        // TODO Add support for caching.
         dispatch(fetchObjectDetailRequest(iri));
         const url = "/api/v1/semantic/object-detail?iri=" +
             encodeURI(iri);
         fetchJsonCallback(url, (json) => {
             const data = convertData(json, iri);
-            dispatch(fetchObjectDetailSuccess(iri, data));
+            dispatch(fetchObjectDetailSuccess(iri, data, json));
         }, (error) => {
             // TODO Add error handling.
         });
@@ -37,19 +36,19 @@ function convertData(jsonld, typeObjectIri) {
         }
     });
 
-    const relIri = triples.resources(typeObject, APP.participateInRelation);
-    const rel = relIri.map((iri) => {
-        const relation = graph.getByResource(jsonld, iri);
-        return {
-            "@id": iri,
-            "label": triples.string(relation, SKOS.prefLabel)
-        }
-    });
+    const domain = triples.resources(typeObject, APP.participateInRelation)
+        .map((iri) => {
+            const relation = graph.getByResource(jsonld, iri);
+            return {
+                "@id": iri,
+                "label": triples.string(relation, SKOS.prefLabel)
+            }
+        });
 
     return {
         "@id": triples.id(typeObject),
         "properties": props,
-        "inRelations" : rel
+        "domain": domain
     }
 }
 
@@ -60,11 +59,12 @@ function fetchObjectDetailRequest(iri) {
     }
 }
 
-function fetchObjectDetailSuccess(iri, data) {
+function fetchObjectDetailSuccess(iri, data, jsonld) {
     return {
         "type": FETCH_OBJECT_DETAIL_SUCCESS,
         "iri": iri,
-        "data": data
+        "data": data,
+        "jsonld": jsonld
     }
 }
 

@@ -11,6 +11,8 @@ import {selectLabel, labelsSelector} from "../../services/labels/";
 import {SSP} from "../../services/vocabulary";
 import {DatasetsTable} from "../../components/dataset-table";
 import {ObjectDetail} from "./object-detail";
+import {PropertyDetail} from "./property-detail";
+import {RelationshipDetail} from "./relationship-detail";
 
 class _SemanticDetailView extends React.Component {
 
@@ -36,6 +38,7 @@ class _SemanticDetailView extends React.Component {
                     <h3>{label}</h3>
                     <p>{selectLabel(data.glossary, this.props.labels)}</p>
                 </div>
+                <a href={data["@id"]}>{data["@id"]}</a><br/>
                 <Legislation conformsTo={data["conformsTo"]}/>
                 {data["@types"].includes(SSP.TypObjektu) ?
                     <div>
@@ -46,13 +49,13 @@ class _SemanticDetailView extends React.Component {
                 {data["@types"].includes(SSP.TypVlastnosti) ?
                     <div>
                         <br/>
-                        <Vlastnost/>
+                        <PropertyDetail iri={data["@id"]}/>
                     </div>
                     : null}
                 {data["@types"].includes(SSP.TypVztahu) ?
                     <div>
                         <br/>
-                        <Vztah/>
+                        <RelationshipDetail iri={data["@id"]}/>
                     </div>
                     : null}
                 {isDataReady(this.props.datasets.status) ?
@@ -87,21 +90,6 @@ export const SemanticDetailView = connect(
     mapDispatchToProps
 )(_SemanticDetailView);
 
-
-class Vlastnost extends React.Component {
-    render() {
-        // TODO
-        return null;
-    }
-}
-
-class Vztah extends React.Component {
-    render() {
-        // TODO
-        return null;
-    }
-}
-
 const Legislation = ({conformsTo}) => {
     if (conformsTo === undefined || conformsTo.length === 0) {
         return null;
@@ -127,21 +115,3 @@ const Legislation = ({conformsTo}) => {
         </div>
     )
 };
-
-/*
-
-POJMY:
-
-https://ssp.opendata.cz/describe/?url=https%3A%2F%2Fssp.opendata.cz%2Fslovn%C3%ADk%2Flegislativn%C3%AD%2Fp%C5%99edpis%2F247%2F1995%2Fpojem%2FMinisterstvo-vnitra
-
-https://ssp.opendata.cz/slovn%C3%ADk/legislativn%C3%AD/p%C5%99edpis/247/1995/pojem/n%C3%A1zev-politick%C3%A9-strany-politick%C3%A9ho-hnut%C3%AD-nebo-koalice
-
-https://ssp.opendata.cz/describe/?url=https%3A%2F%2Fssp.opendata.cz%2Fslovn%C3%ADk%2Flegislativn%C3%AD%2Fp%C5%99edpis%2F111%2F2009%2Fpojem%2Fje-evidov%C3%A1na
-
-LOCALHOST:
-
-http://localhost:3000/ssp?iri=https%3A%2F%2Fssp.opendata.cz%2Fslovn%C3%ADk%2Flegislativn%C3%AD%2Fp%C5%99edpis%2F247%2F1995%2Fpojem%2Fn%C3%A1zev-politick%C3%A9-strany-politick%C3%A9ho-hnut%C3%AD-nebo-koalice
-
-http://localhost:3000/ssp?iri=https%3A%2F%2Fssp.opendata.cz%2Fslovn%C3%ADk%2Flegislativn%C3%AD%2Fp%C5%99edpis%2F247%2F1995%2Fpojem%2FMinisterstvo-vnitra
-
- */

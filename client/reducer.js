@@ -11,11 +11,14 @@ import {reducer as skosConcept} from "./dataset/detail/skos-concept"
 import {reducer as semanticDetail} from "./semantic/detail";
 import {reducer as objectDetail} from "./semantic/detail/object-detail";
 import {reducer as labels} from "./services/labels";
+import {reducer as propertyDetail} from "./semantic/detail/property-detail";
+import {reducer as relationshipDetail} from "./semantic/detail/relationship-detail";
 
 // http://redux.js.org/docs/api/combineReducers.html
 const reducers = combineReducers({
     "routing": routerReducer,
     "notifications": notificationReducer,
+    // TODO Update for new reducer styles.
     "dataset": combineReducers({
         "list": datasetListReducer,
         "detail": datasetDetailReducer
@@ -23,13 +26,15 @@ const reducers = combineReducers({
     "organisation": combineReducers({
         "list": organisationListReducer
     }),
-    [loadingIndicator.name]: loadingIndicator.reducer,
     "keywords": keywordsTagCloudReducer,
+    [loadingIndicator.name]: loadingIndicator.reducer,
     [similarDataset.name]: similarDataset.reducer,
     [skosConcept.name]: skosConcept.reducer,
     [semanticDetail.name]: semanticDetail.reducer,
-    [objectDetail.name]: objectDetail.reducer
+    [objectDetail.name]: objectDetail.reducer,
     [labels.name]: labels.reducer,
+    [propertyDetail.name]: propertyDetail.reducer,
+    [relationshipDetail.name] : relationshipDetail.reducer
 });
 
 export default reducers;

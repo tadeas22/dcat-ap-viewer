@@ -17,6 +17,21 @@ graph.getByType = (data, type) => {
     return undefined;
 };
 
+graph.getAllByType = (data, type) => {
+    const output = [];
+    const graph = getGraph(data);
+    if (graph === undefined || graph.length === undefined) {
+        return [];
+    }
+    for (let index = 0; index < graph.length; ++index) {
+        if (triples.type(graph[index]).indexOf(type) > -1) {
+            output.push(graph[index]);
+        }
+    }
+    return output;
+};
+
+
 function getGraph(data) {
     // TODO Add support for different data formats.
     if (data["@graph"] === undefined) {
@@ -50,6 +65,15 @@ graph.getByResource = (data, iri) => {
         }
     }
     return undefined;
+};
+
+graph.getResources = (data) => {
+    const graph = getGraph(data);
+    const result = [];
+    for (let index = 0; index < graph.length; ++index) {
+        result.push(graph[index]);
+    }
+    return result;
 };
 
 export const triples = {};
