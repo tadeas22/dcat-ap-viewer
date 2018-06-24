@@ -11,7 +11,7 @@ function initializeParsers(app) {
 function initializeRoutes(app) {
     app.use("/api/v1/solr", require("./server/routes/solr"));
     app.use("/api/v1/resource/", require("./server/routes/resource"));
-    app.use("/api/v1/semantic/", require("./server/routes/semantic"));
+    app.use("/api/v1/semantic/", require("./server/semantic/semantic-routes"));
 }
 
 function initializeWebpack(app) {
