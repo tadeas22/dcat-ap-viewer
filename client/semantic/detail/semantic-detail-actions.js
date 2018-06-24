@@ -45,6 +45,7 @@ function convertData(jsonld) {
         "@id": triples.id(concept),
         "@types": triples.type(concept),
         "inScheme": triples.resources(concept, SKOS.inScheme),
+        "broader": triples.resources(concept, SKOS.broader),
         "conformsTo": conformsTo,
         "glossary": convertGlossary(jsonld)
     }

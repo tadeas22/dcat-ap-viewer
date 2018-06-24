@@ -13,6 +13,11 @@ import {DatasetsTable} from "../../components/dataset-table";
 import {ObjectDetail} from "./object-detail";
 import {PropertyDetail} from "./property-detail";
 import {RelationshipDetail} from "./relationship-detail";
+import {
+    getUrl,
+    SEMANTIC_DETAIL,
+    SEMANTIC_QUERY
+} from "../../application/navigation";
 
 class _SemanticDetailView extends React.Component {
 
@@ -38,7 +43,7 @@ class _SemanticDetailView extends React.Component {
                     <h3>{label}</h3>
                     <p>{selectLabel(data.glossary, this.props.labels)}</p>
                 </div>
-                <a href={data["@id"]}>{data["@id"]}</a><br/>
+                <SemanticDetail data={data} labels={this.props.labels}/>
                 <Legislation conformsTo={data["conformsTo"]}/>
                 {data["@types"].includes(SSP.TypObjektu) ?
                     <div>
@@ -90,6 +95,46 @@ export const SemanticDetailView = connect(
     mapDispatchToProps
 )(_SemanticDetailView);
 
+const SemanticDetail = ({data, labels}) => {
+
+    const tableStyle = {
+        "border": "1px solid #E7E6E3",
+        "width": "100%",
+        "padding": "1rem",
+        "marginTop": "1rem"
+    };
+
+    let nadrazenePojmy = null;
+    if (data["broader"].length > 0) {
+        nadrazenePojmy = (
+            <div>
+                Nadřazené pojmy:
+                <ul>
+                    {data["broader"].map((iri) => (
+                        <li key={iri}>
+                            <a href={semanticDetailLink(iri)}>
+                                {iri}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        )
+    }
+
+
+    return (
+        <div style={tableStyle}>
+            <a href={data["@id"]}>{data["@id"]}</a>
+            {nadrazenePojmy}
+        </div>
+    );
+};
+
+function semanticDetailLink(iri) {
+    return getUrl(SEMANTIC_DETAIL, {[SEMANTIC_QUERY]: iri})
+}
+
 const Legislation = ({conformsTo}) => {
     if (conformsTo === undefined || conformsTo.length === 0) {
         return null;
@@ -115,3 +160,4 @@ const Legislation = ({conformsTo}) => {
         </div>
     )
 };
+
