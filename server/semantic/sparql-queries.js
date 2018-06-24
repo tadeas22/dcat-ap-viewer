@@ -3,7 +3,6 @@ function similarDatasetQuery(iri) {
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX z-sgov-pojem: <https://ssp.opendata.cz/slovník/základní/pojem/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX dcat: <http://www.w3.org/ns/dcat#>
 
@@ -51,15 +50,19 @@ CONSTRUCT {
 
 function annotatedDatasetsQuery(iri) {
     return `
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
 SELECT DISTINCT ?dataset ?title ?publisher ?publisherLabel WHERE {
 
   ?dataset dcat:theme <` + iri + `> .
  
   OPTIONAL { ?dataset dcterms:title ?title. }
   OPTIONAL { ?dataset dcterms:publisher ?publisher. }
-  OPTIONAL { ?publisher skos:prefLabel ?publisherLabel. } +
+  OPTIONAL { ?publisher skos:prefLabel ?publisherLabel. }
  
-  FILTER(<` + iri + `> != ?dataset)
+  FILTER ( <` + iri + `> != ?dataset )
 }`
 }
 
@@ -119,7 +122,7 @@ CONSTRUCT {
   }
 
   OPTIONAL {
-    ?pojem rdfs:subClassOf ?nadrazenyPojem ;
+    ?pojem skos:broader ?nadrazenyPojem ;
       skos:prefLabel ?nazevNadrazenehoPojmu .
   }
 
@@ -187,7 +190,7 @@ CONSTRUCT {
 
 } WHERE {
 
-  VALUES ?pojem { < + iri + > }
+  VALUES ?pojem { <` + iri + `> }
 
   ?pojem a ssp:typ-vlastnosti ;
     skos:prefLabel ?nazevPojmu ;
@@ -201,7 +204,7 @@ CONSTRUCT {
   }
 
   OPTIONAL {
-    ?pojem rdfs:subClassOf ?nadrazenyPojem ;
+    ?pojem skos:broader ?nadrazenyPojem ;
       skos:prefLabel ?nazevNadrazenehoPojmu .
   }
 
