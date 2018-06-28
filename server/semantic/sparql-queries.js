@@ -92,7 +92,7 @@ CONSTRUCT {
   ?glosar rdfs:label ?glosarNazev .
 
   # nadřazený pojem
-  ?pojem rdfs:subClassOf ?nadrazenyPojem .
+  ?pojem skos:broader ?nadrazenyPojem .
   ?nadrazenyPojem a ssp:typ-objektu ;
     skos:prefLabel ?nazevNadrazenehoPojmu .
 
@@ -179,7 +179,7 @@ CONSTRUCT {
   ?glosar rdfs:label ?glosarNazev .
 
   # nadřazený pojem
-  ?pojem rdfs:subClassOf ?nadrazenyPojem .
+  ?pojem skos:broader ?nadrazenyPojem .
   ?nadrazenyPojem a ssp:typ-objektu ;
     skos:prefLabel ?nazevNadrazenehoPojmu .
 
@@ -245,7 +245,7 @@ CONSTRUCT {
   ?glosar rdfs:label ?glosarNazev .
 
   # nadřazený pojem
-  ?pojem rdfs:subClassOf ?nadrazenyPojem .
+  ?pojem skos:broader ?nadrazenyPojem .
   ?nadrazenyPojem a ssp:typ-objektu ;
     skos:prefLabel ?nazevNadrazenehoPojmu .
 
